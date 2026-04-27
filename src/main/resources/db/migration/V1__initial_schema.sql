@@ -12,6 +12,12 @@ CREATE TABLE refresh_tokens
     CONSTRAINT pk_refresh_tokens PRIMARY KEY (id)
 );
 
+CREATE TABLE user_roles
+(
+    user_id BIGINT NOT NULL,
+    role    VARCHAR(50)
+);
+
 CREATE TABLE users
 (
     id         BIGINT                      NOT NULL,
@@ -20,7 +26,6 @@ CREATE TABLE users
     name       VARCHAR(255),
     email      VARCHAR(255)                NOT NULL,
     password   VARCHAR(255)                NOT NULL,
-    role       VARCHAR(255),
     CONSTRAINT pk_users PRIMARY KEY (id)
 );
 
@@ -36,3 +41,6 @@ ALTER TABLE refresh_tokens
     ADD CONSTRAINT FK_REFRESH_TOKENS_ON_USER FOREIGN KEY (user_id) REFERENCES users (id);
 
 CREATE INDEX idx_refresh_token_user ON refresh_tokens (user_id);
+
+ALTER TABLE user_roles
+    ADD CONSTRAINT fk_user_roles_on_user FOREIGN KEY (user_id) REFERENCES users (id);

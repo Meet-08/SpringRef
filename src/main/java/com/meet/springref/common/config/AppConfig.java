@@ -18,4 +18,5 @@ public class AppConfig {
     public void setCookieSecure(String env) {
         COOKIE_SECURE = !"dev".equalsIgnoreCase(env);
     }
+    
 }

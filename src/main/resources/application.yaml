@@ -20,10 +20,24 @@ spring:
       host: localhost
       port: 6379
 
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    from: ${MAIL_FROM}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
 jwt:
   secret: ${JWT_SECRET}
 
 app:
+  frontend-url: http://localhost:3000
   cors:
     allowed-origins: http://localhost:3000,http://localhost:5000
   env: ${APP_ENV:dev}

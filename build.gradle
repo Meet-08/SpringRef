@@ -36,6 +36,8 @@ dependencies {
     implementation 'com.bucket4j:bucket4j_jdk17-redis-common:8.14.0'
     implementation 'com.bucket4j:bucket4j_jdk17-lettuce:8.14.0'
     implementation 'com.cloudinary:cloudinary-http44:1.39.0'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     testImplementation 'org.springframework.security:spring-security-test'
     runtimeOnly 'org.flywaydb:flyway-database-postgresql'
     implementation 'io.jsonwebtoken:jjwt-api:0.13.0'
