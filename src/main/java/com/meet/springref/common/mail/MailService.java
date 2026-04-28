@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -25,6 +26,7 @@ public class MailService {
     @Value("${spring.mail.from:noreply@springref.com}")
     private String fromEmail;
 
+    @Async("mailExecutor")
     public void sendHtmlEmail(String to, String subject, String templateName, Map<String, Object> variables) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
@@ -51,6 +53,7 @@ public class MailService {
         }
     }
 
+    @Async("mailExecutor")
     public void sendOtpEmail(String to, String name, String otp) {
         Map<String, Object> variables = Map.of(
                 "name", name,
@@ -59,6 +62,7 @@ public class MailService {
         sendHtmlEmail(to, "Your OTP Verification Code", "otp-email", variables);
     }
 
+    @Async("mailExecutor")
     public void sendWelcomeEmail(String to, String name) {
         Map<String, Object> variables = Map.of(
                 "name", name
