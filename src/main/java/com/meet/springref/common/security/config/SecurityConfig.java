@@ -2,6 +2,7 @@ package com.meet.springref.common.security.config;
 
 import com.meet.springref.common.ratelimit.filter.RateLimiterFilter;
 import com.meet.springref.common.security.filter.JwtFilter;
+import com.meet.springref.common.security.handler.UnauthorizedResponseHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -28,6 +29,7 @@ public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
     private final RateLimiterFilter rateLimiterFilter;
+    private final UnauthorizedResponseHandler unauthorizedResponseHandler;
 
     @Value("${app.cors.allowed-origins}")
     private List<String> allowedOrigins;
@@ -39,6 +41,9 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(unauthorizedResponseHandler)
+                )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login", "/api/auth/register", "/api/auth/refresh", "/api/auth/logout", "/api/auth/forgot-password", "/api/auth/reset-password").permitAll()
                         .anyRequest().authenticated()
