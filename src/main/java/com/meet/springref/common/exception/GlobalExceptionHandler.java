@@ -5,6 +5,7 @@ import com.meet.springref.features.auth.exception.AuthException;
 import com.meet.springref.features.auth.exception.InvalidTokenException;
 import com.meet.springref.features.user.exception.UserException;
 import jakarta.validation.ConstraintViolationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -19,8 +20,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
-
+    
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Map<String, String>>> handleValidationException(
             MethodArgumentNotValidException ex
@@ -61,6 +63,10 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserException.class)
     public ResponseEntity<ApiResponse<Void>> handleUserException(UserException ex) {
+        if (ex.getMessage() != null && ex.getMessage().contains("User not found")) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.error(ex.getMessage()));
+        }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ApiResponse.error(ex.getMessage()));
     }
@@ -96,6 +102,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleException(Exception ex) {
+        log.error("Unhandled exception occurred", ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ApiResponse.error("An unexpected error occurred"));
     }

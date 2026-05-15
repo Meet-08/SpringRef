@@ -68,6 +68,7 @@ public class UserService {
         return toResponse(userRepository.save(user));
     }
 
+    @Transactional
     public void updatePassword(String email, String newPassword) {
         User user = getByEmail(email);
         user.setPassword(passwordEncoder.encode(newPassword));
