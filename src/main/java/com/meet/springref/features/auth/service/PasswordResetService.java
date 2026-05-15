@@ -7,13 +7,11 @@ import com.meet.springref.features.auth.dto.request.ResetPasswordRequest;
 import com.meet.springref.features.auth.exception.AuthException;
 import com.meet.springref.features.user.exception.UserException;
 import com.meet.springref.features.user.model.User;
-import com.meet.springref.features.user.repository.UserRepository;
 import com.meet.springref.features.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,10 +30,8 @@ public class PasswordResetService {
     private static final String RESET_TOKEN_PREFIX = "password_reset";
     private static final Duration TOKEN_TTL = Duration.ofMinutes(15);
     private final UserService userService;
-    private final UserRepository userRepository;
     private final RedisService redisService;
     private final MailService mailService;
-    private final PasswordEncoder passwordEncoder;
     private final SecureRandom secureRandom = new SecureRandom();
 
     @Value("${app.frontend-url:http://localhost:3000}")
@@ -69,9 +65,7 @@ public class PasswordResetService {
             throw new AuthException("Invalid or expired password reset token");
         }
 
-        User user = userService.getByEmail(email);
-        user.setPassword(passwordEncoder.encode(request.newPassword()));
-        userRepository.save(user);
+        userService.updatePassword(email, request.newPassword());
 
         redisService.delete(key);
         log.info("Password reset successfully for user: {}", email);

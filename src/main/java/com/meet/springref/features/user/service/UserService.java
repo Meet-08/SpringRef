@@ -9,6 +9,7 @@ import com.meet.springref.features.user.exception.UserException;
 import com.meet.springref.features.user.model.User;
 import com.meet.springref.features.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public User createUser(String name, String email, String encodedPassword) {
@@ -64,6 +66,13 @@ public class UserService {
         }
 
         return toResponse(userRepository.save(user));
+    }
+
+    @Transactional
+    public void updatePassword(String email, String newPassword) {
+        User user = getByEmail(email);
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 
     @Transactional
